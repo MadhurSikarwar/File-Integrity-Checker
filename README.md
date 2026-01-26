@@ -1,7 +1,6 @@
 # File Integrity Checker - Ultimate Edition 🔐
 
 ![Version](https://img.shields.io/badge/version-2.0%20Ultimate-blue.svg)
-![License](https://img.shields.io/badge/license-MIT-green.svg)
 ![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux-lightgrey.svg)
 ![Features](https://img.shields.io/badge/features-18%20Complete-brightgreen.svg)
 
@@ -432,7 +431,6 @@ Perfect for a **2nd-year Computer Science project** or **portfolio showcase**!
 FileChecker/
 ├── FinalChecker.c              # Main application source (1600+ lines)
 ├── README.md                   # This file
-├── LICENSE                     # MIT License
 ├── .gitignore                  # Git ignore rules
 ├── integrity_checker.conf      # Auto-generated config (ignored)
 ├── integrity_history.db        # Auto-generated database (ignored)
@@ -451,12 +449,6 @@ Contributions welcome! Potential enhancements:
 - Windows/Linux installers
 - File permission tracking
 - Email notifications
-
----
-
-## 📄 License
-
-This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
 
 ---
 
