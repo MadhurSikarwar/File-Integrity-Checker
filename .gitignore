@@ -1,0 +1,38 @@
+# Ignore build outputs
+*.exe
+*.o
+*.obj
+*.out
+FinalChecker
+a.out
+
+# Ignore runtime files
+integrity_checker.conf
+integrity_history.db
+integrity_log.csv
+integrity_report.html
+
+# Ignore temporary files
+*.tmp
+*.log
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Ignore IDE/Editor files
+.vscode/
+.idea/
+*.sublime-*
+.vs/
+
+# Ignore OS files
+Thumbs.db
+desktop.ini
+.directory
+
+# Ignore snapshot backups (if implemented)
+snapshots_backup/
+
+# Keep git folder structure
+!.gitkeep
