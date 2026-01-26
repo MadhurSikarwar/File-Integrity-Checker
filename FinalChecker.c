@@ -1505,44 +1505,111 @@ void on_watchdog_toggled(GtkToggleButton *b, gpointer d) {
     }
 }
 
-// About Dialog
+// About Dialog with Complete OS Concepts Reference
 void on_about_clicked(GtkWidget *btn, gpointer data) {
-    GtkWidget *dialog = gtk_message_dialog_new(
+    GtkWidget *dialog = gtk_dialog_new_with_buttons(
+        "OS Concepts & Features",
         GTK_WINDOW(app.window),
-        GTK_DIALOG_MODAL,
-        GTK_MESSAGE_INFO,
-        GTK_BUTTONS_CLOSE,
-        "File Integrity Checker - Ultimate Edition"
+        GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+        "Close", GTK_RESPONSE_CLOSE,
+        NULL
     );
     
-    gtk_message_dialog_format_secondary_markup(
-        GTK_MESSAGE_DIALOG(dialog),
-        "<b>Version:</b> 2.0 Ultimate\n"
-        "<b>Features:</b> 18 Complete Security Tools\n\n"
-        "✓ Baseline Snapshots & Comparison\n"
-        "✓ Real-Time Watchdog Monitoring\n"
-        "✓ Multi-Hash (SHA-256/MD5/SHA-512)\n"
-        "✓ VirusTotal Integration\n"
-        "✓ CSV & HTML Export\n"
-        "✓ Smart Filtering\n"
-        "✓ Performance Metrics Dashboard\n"
-        "✓ Configuration Persistence\n"
-        "✓ Snapshot Management UI\n"
-        "✓ Dark/Light Mode Toggle\n"
-        "✓ Duplicate File Detector\n"
-        "✓ History Search & Filtering\n"
-        "✓ File Type Statistics\n"
-        "✓ Premium Gradient UI\n\n"
-        "<b>Keyboard Shortcuts:</b>\n"
-        "Ctrl+S - Start Directory Scan\n"
-        "Ctrl+H - Export HTML Report\n"
-        "Ctrl+E - Export CSV\n"
-        "Ctrl+F - Focus Search\n"
-        "Ctrl+Q - Quit Application\n\n"
-        "<i>Built for demonstrating professional security tooling</i>"
-    );
+    gtk_window_set_default_size(GTK_WINDOW(dialog), 750, 700);
     
-    gtk_window_set_title(GTK_WINDOW(dialog), "About");
+    // Create a scrolled window
+    GtkWidget *scrolled = gtk_scrolled_window_new(NULL, NULL);
+    gtk_widget_set_vexpand(scrolled, TRUE);
+    gtk_widget_set_hexpand(scrolled, TRUE);
+    
+    // Content Box
+    GtkWidget *content_area = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
+    gtk_box_pack_start(GTK_BOX(content_area), scrolled, TRUE, TRUE, 0);
+
+    // Use GtkTextView instead of Label for better scrolling support
+    GtkWidget *text_view = gtk_text_view_new();
+    gtk_text_view_set_editable(GTK_TEXT_VIEW(text_view), FALSE);
+    gtk_text_view_set_cursor_visible(GTK_TEXT_VIEW(text_view), FALSE);
+    gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(text_view), GTK_WRAP_WORD);
+    gtk_text_view_set_left_margin(GTK_TEXT_VIEW(text_view), 20);
+    gtk_text_view_set_right_margin(GTK_TEXT_VIEW(text_view), 20);
+    gtk_text_view_set_top_margin(GTK_TEXT_VIEW(text_view), 20);
+    gtk_text_view_set_bottom_margin(GTK_TEXT_VIEW(text_view), 20);
+
+    GtkTextBuffer *buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(text_view));
+    
+    // Create tags for formatting
+    gtk_text_buffer_create_tag(buffer, "heading", "weight", PANGO_WEIGHT_BOLD, "scale", 1.5, "foreground", "#2c3e50", NULL);
+    gtk_text_buffer_create_tag(buffer, "subheading", "weight", PANGO_WEIGHT_BOLD, "scale", 1.2, "foreground", "#2980b9", "underline", PANGO_UNDERLINE_SINGLE, NULL);
+    gtk_text_buffer_create_tag(buffer, "bold", "weight", PANGO_WEIGHT_BOLD, NULL);
+    gtk_text_buffer_create_tag(buffer, "italic", "style", PANGO_STYLE_ITALIC, NULL);
+    
+    GtkTextIter iter;
+    gtk_text_buffer_get_start_iter(buffer, &iter);
+
+    // Insert Content
+    gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, "FILE INTEGRITY CHECKER - Ultimate Edition v2.0\n\n", -1, "heading", NULL);
+    
+    gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, "📚 OPERATING SYSTEM CONCEPTS REFERENCE\n\n", -1, "heading", NULL);
+
+    gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, "1. FILE SYSTEM MANAGEMENT\n", -1, "subheading", NULL);
+    gtk_text_buffer_insert(buffer, &iter, "• File I/O: Uses fopen, fread, fwrite, fclose for buffered access.\n", -1);
+    gtk_text_buffer_insert(buffer, &iter, "• Directory Traversal: Uses opendir, readdir to scan hierarchy.\n", -1);
+    gtk_text_buffer_insert(buffer, &iter, "• Metadata: Uses stat() for size, timestamps, permissions.\n", -1);
+    gtk_text_buffer_insert(buffer, &iter, "• Path Resolution: Handling absolute/relative paths.\n\n", -1);
+
+    gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, "2. PROCESS MANAGEMENT\n", -1, "subheading", NULL);
+    gtk_text_buffer_insert(buffer, &iter, "• Multi-threading: GThread separates UI from scanning logic.\n", -1);
+    gtk_text_buffer_insert(buffer, &iter, "• Scheduling: Watchdog uses timer interrupts (15s interval).\n", -1);
+    gtk_text_buffer_insert(buffer, &iter, "• States: Transitions between Running (Scan) and Waiting (Idle).\n\n", -1);
+
+    gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, "3. MEMORY MANAGEMENT\n", -1, "subheading", NULL);
+    gtk_text_buffer_insert(buffer, &iter, "• Dynamic Allocation: malloc/calloc for file lists.\n", -1);
+    gtk_text_buffer_insert(buffer, &iter, "• Deallocation: g_free() to prevent memory leaks.\n", -1);
+    gtk_text_buffer_insert(buffer, &iter, "• Buffer Management: Fixed chunks for checking hash of large files.\n\n", -1);
+
+    gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, "4. CONCURRENCY & SYNCHRONIZATION\n", -1, "subheading", NULL);
+    gtk_text_buffer_insert(buffer, &iter, "• Mutual Exclusion: SQLite handles DB lock contention.\n", -1);
+    gtk_text_buffer_insert(buffer, &iter, "• Thread Safety: g_idle_add() to push updates to Main Thread.\n", -1);
+    gtk_text_buffer_insert(buffer, &iter, "• Race Conditions: Avoided by separating Logic and UI threads.\n\n", -1);
+
+    gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, "5. I/O MANAGEMENT\n", -1, "subheading", NULL);
+    gtk_text_buffer_insert(buffer, &iter, "• Buffered I/O: Standard library buffers to reduce syscalls.\n", -1);
+    gtk_text_buffer_insert(buffer, &iter, "• Blocking vs Non-Blocking: Scan is blocking in worker thread.\n\n", -1);
+
+    gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, "6. SECURITY\n", -1, "subheading", NULL);
+    gtk_text_buffer_insert(buffer, &iter, "• Integrity: SHA-256/MD5/SHA-512 Hashing.\n", -1);
+    gtk_text_buffer_insert(buffer, &iter, "• Access Control: Monitoring file permission bits.\n\n", -1);
+
+    gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, "7. DATABASE (SYSTEMS)\n", -1, "subheading", NULL);
+    gtk_text_buffer_insert(buffer, &iter, "• ACID: Atomicity and Durability via SQLite journaling.\n", -1);
+    gtk_text_buffer_insert(buffer, &iter, "• Persistence: Saving state to disk between runs.\n\n", -1);
+
+    gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, "8. INTER-PROCESS COMMUNICATION (IPC)\n", -1, "subheading", NULL);
+    gtk_text_buffer_insert(buffer, &iter, "• Signals: GTK Signals (Observer pattern) for events.\n", -1);
+    gtk_text_buffer_insert(buffer, &iter, "• Shared Memory: Global 'app' struct accessed by threads.\n\n", -1);
+
+    gtk_text_buffer_insert_with_tags_by_name(buffer, &iter, "✨ APPLICATION FEATURES (18 Total)\n", -1, "subheading", NULL);
+    gtk_text_buffer_insert(buffer, &iter, "1. Baseline Snapshots: Capture directory state.\n", -1);
+    gtk_text_buffer_insert(buffer, &iter, "2. Real-Time Watchdog: Auto-monitor changes.\n", -1);
+    gtk_text_buffer_insert(buffer, &iter, "3. Multi-Hash: SHA256, MD5, SHA512 support.\n", -1);
+    gtk_text_buffer_insert(buffer, &iter, "4. VirusTotal Integration: Online reputation check.\n", -1);
+    gtk_text_buffer_insert(buffer, &iter, "5. CSV Export: Audit trails.\n", -1);
+    gtk_text_buffer_insert(buffer, &iter, "6. Smart Filtering: Ignore .tmp/.log files.\n", -1);
+    gtk_text_buffer_insert(buffer, &iter, "7. Performance Metrics: Live speed/progress.\n", -1);
+    gtk_text_buffer_insert(buffer, &iter, "8. Config Persistence: Remembers settings.\n", -1);
+    gtk_text_buffer_insert(buffer, &iter, "9. Snapshot UI: Manage saved baselines.\n", -1);
+    gtk_text_buffer_insert(buffer, &iter, "10. Dark/Light Mode: Dynamic theme switching.\n", -1);
+    gtk_text_buffer_insert(buffer, &iter, "11. Duplicate Detector: Hash-based finding.\n", -1);
+    gtk_text_buffer_insert(buffer, &iter, "12. History Search: Instant log filtering.\n", -1);
+    gtk_text_buffer_insert(buffer, &iter, "13. File Type Stats: Visual analytics.\n", -1);
+    gtk_text_buffer_insert(buffer, &iter, "14. HTML Reports: Professional output.\n", -1);
+    gtk_text_buffer_insert(buffer, &iter, "15. About Dialog: This reference guide.\n", -1);
+    gtk_text_buffer_insert(buffer, &iter, "16. Keyboard Shortcuts: Ctrl+S/H/E/Q.\n", -1);
+    gtk_text_buffer_insert(buffer, &iter, "17. Tooltips: Integrated API documentation.\n", -1);
+    gtk_text_buffer_insert(buffer, &iter, "18. Premium UI: Gradients & Animations.\n\n", -1);
+    gtk_container_add(GTK_CONTAINER(scrolled), text_view);
+    gtk_widget_show_all(dialog);
     gtk_dialog_run(GTK_DIALOG(dialog));
     gtk_widget_destroy(dialog);
 }
