@@ -394,6 +394,7 @@ typedef struct {
     // NEW: Status Bar
     GtkWidget *statusbar;
     GtkWidget *lbl_status_files;
+    GtkWidget *lbl_dup_stats;  // NEW: Stats label for duplicates page
     GtkWidget *lbl_status_speed;
     GtkWidget *lbl_status_db;
     
@@ -1689,7 +1690,174 @@ GtkWidget* create_history_page() {
     return box;
 }
 
-// Duplicate File Detector
+// NEW: Find duplicates within a specific folder
+void on_filter_duplicates_by_folder(GtkWidget *btn, gpointer data) {
+    GtkListStore *dup_store = (GtkListStore*)data;
+    
+    GtkWidget *dialog = gtk_file_chooser_dialog_new("Select Folder to Find Duplicates",
+        GTK_WINDOW(app.window),
+        GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
+        "_Cancel", GTK_RESPONSE_CANCEL,
+        "_Select", GTK_RESPONSE_ACCEPT,
+        NULL);
+    
+    if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT) {
+        char *folder = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
+        if (!folder) {
+            gtk_widget_destroy(dialog);
+            return;
+        }
+        
+        // Clear existing data
+        gtk_list_store_clear(dup_store);
+        
+        // Convert to forward slashes for matching
+        char normalized[2048];
+        int j = 0;
+        for (int i = 0; folder[i] && j < sizeof(normalized) - 1; i++) {
+            normalized[j++] = (folder[i] == '\\') ? '/' : folder[i];
+        }
+        normalized[j] = '\0';
+        
+        // Simple SQL without complex REPLACE
+        sqlite3_stmt *stmt;
+        const char *sql = "SELECT hash, COUNT(DISTINCT filename) as cnt FROM history GROUP BY hash HAVING cnt > 1;";
+        
+        if (sqlite3_prepare_v2(app.db, sql, -1, &stmt, 0) == SQLITE_OK) {
+            while (sqlite3_step(stmt) == SQLITE_ROW) {
+                const char *hash = (const char*)sqlite3_column_text(stmt, 0);
+                int count = sqlite3_column_int(stmt, 1);
+                
+                // Get filenames and filter in C code
+                sqlite3_stmt *stmt2;
+                char sql2[512];
+                snprintf(sql2, sizeof(sql2), "SELECT DISTINCT filename FROM history WHERE hash='%s';", hash);
+                
+                char files_list[4096] = "";
+                int matches = 0;
+                
+                if (sqlite3_prepare_v2(app.db, sql2, -1, &stmt2, 0) == SQLITE_OK) {
+                    while (sqlite3_step(stmt2) == SQLITE_ROW) {
+                        const char *filepath = (const char*)sqlite3_column_text(stmt2, 0);
+                        
+                        // Normalize and check if file is in selected folder
+                        char norm_path[2048];
+                        int k = 0;
+                        for (int i = 0; filepath[i] && k < sizeof(norm_path) - 1; i++) {
+                            norm_path[k++] = (filepath[i] == '\\') ? '/' : filepath[i];
+                        }
+                        norm_path[k] = '\0';
+                        
+                        if (strstr(norm_path, normalized) == norm_path) {
+                            if (matches > 0) strcat(files_list, "\n  \u2022 ");
+                            else strcat(files_list, "  \u2022 ");
+                            strcat(files_list, filepath);
+                            matches++;
+                        }
+                    }
+                }
+                sqlite3_finalize(stmt2);
+                
+                // Only add if multiple files match in this folder
+                if (matches > 1) {
+                    char short_hash[20];
+                    snprintf(short_hash, sizeof(short_hash), "%.16s...", hash);
+                    
+                    GtkTreeIter iter;
+                    gtk_list_store_append(dup_store, &iter);
+                    gtk_list_store_set(dup_store, &iter, 
+                        0, 1,
+                        1, short_hash,
+                        2, matches,
+                        3, files_list,
+                        4, hash,
+                        -1);
+                }
+            }
+        }
+        sqlite3_finalize(stmt);
+        
+        g_free(folder);
+    }
+    gtk_widget_destroy(dialog);
+}
+
+// NEW: Refresh all duplicates (show entire database)
+void on_refresh_all_duplicates(GtkWidget *btn, gpointer data) {
+    GtkListStore *dup_store = (GtkListStore*)data;
+    
+    // Clear and reload all duplicates
+    gtk_list_store_clear(dup_store);
+    
+    sqlite3_stmt *stmt;
+    const char *sql = "SELECT hash, COUNT(DISTINCT filename) as cnt FROM history GROUP BY hash HAVING cnt > 1 ORDER BY cnt DESC;";
+    
+    int group_num = 1;
+    
+    if (sqlite3_prepare_v2(app.db, sql, -1, &stmt, 0) == SQLITE_OK) {
+        while (sqlite3_step(stmt) == SQLITE_ROW) {
+            const char *hash = (const char*)sqlite3_column_text(stmt, 0);
+            int count = sqlite3_column_int(stmt, 1);
+            
+            sqlite3_stmt *stmt2;
+            char sql2[512];
+            snprintf(sql2, sizeof(sql2), "SELECT DISTINCT filename FROM history WHERE hash='%s';", hash);
+            
+            char files_list[4096] = "";
+            if (sqlite3_prepare_v2(app.db, sql2, -1, &stmt2, 0) == SQLITE_OK) {
+                int idx = 0;
+                while (sqlite3_step(stmt2) == SQLITE_ROW) {
+                    if (idx > 0) strcat(files_list, "\n  • ");
+                    else strcat(files_list, "  • ");
+                    strcat(files_list, (const char*)sqlite3_column_text(stmt2, 0));
+                    idx++;
+                }
+            }
+            sqlite3_finalize(stmt2);
+            
+            char short_hash[20];
+            snprintf(short_hash, sizeof(short_hash), "%.16s...", hash);
+            
+            GtkTreeIter iter;
+            gtk_list_store_append(dup_store, &iter);
+            gtk_list_store_set(dup_store, &iter, 
+                0, group_num++,
+                1, short_hash,
+                2, count,
+                3, files_list,
+                4, hash,
+                -1);
+        }
+    }
+    sqlite3_finalize(stmt);
+    
+    // Update stats label if available
+    if (app.lbl_dup_stats) {
+        int num_groups = gtk_tree_model_iter_n_children(GTK_TREE_MODEL(dup_store), NULL);
+        char stats_text[256];
+        if (num_groups > 0) {
+            // Count total files
+            int total_files = 0;
+            GtkTreeIter iter;
+            if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(dup_store), &iter)) {
+                do {
+                    int count;
+                    gtk_tree_model_get(GTK_TREE_MODEL(dup_store), &iter, 2, &count, -1);
+                    total_files += count;
+                } while (gtk_tree_model_iter_next(GTK_TREE_MODEL(dup_store), &iter));
+            }
+            snprintf(stats_text, sizeof(stats_text), 
+                "<span foreground='#e74c3c' weight='bold' size='large'>⚠️ Found %d duplicate groups (%d total duplicate files)</span>",
+                num_groups, total_files);
+        } else {
+            snprintf(stats_text, sizeof(stats_text), 
+                "<span foreground='#2ecc71' weight='bold' size='large'>✅ No duplicates found</span>");
+        }
+        gtk_label_set_markup(GTK_LABEL(app.lbl_dup_stats), stats_text);
+    }
+}
+
+// Duplicate File Detector - REDESIGNED
 GtkWidget* create_duplicates_page() {
     GtkWidget *box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
     GtkWidget *card = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
@@ -1698,67 +1866,124 @@ GtkWidget* create_duplicates_page() {
     gtk_box_pack_start(GTK_BOX(box), card, TRUE, TRUE, 0);
     
     GtkWidget *lbl_title = gtk_label_new(NULL);
-    gtk_label_set_markup(GTK_LABEL(lbl_title), "<b>Duplicate File Detector</b>");
+    gtk_label_set_markup(GTK_LABEL(lbl_title), "<b>🔍 Duplicate File Detector</b>");
     gtk_box_pack_start(GTK_BOX(card), lbl_title, FALSE, FALSE, 0);
     
-    GtkWidget *lbl_stats = gtk_label_new("Analyzing...");
-    gtk_box_pack_start(GTK_BOX(card), lbl_stats, FALSE, FALSE, 0);
+    // Stats label - will be updated dynamically
+    app.lbl_dup_stats = gtk_label_new(NULL);
+    gtk_box_pack_start(GTK_BOX(card), app.lbl_dup_stats, FALSE, FALSE, 0);
     
     GtkWidget *scrolled = gtk_scrolled_window_new(NULL, NULL);
     gtk_widget_set_vexpand(scrolled, TRUE);
     
-    GtkListStore *dup_store = gtk_list_store_new(3, G_TYPE_STRING, G_TYPE_INT, G_TYPE_STRING);
+    // NEW: Improved table with better columns
+    GtkListStore *dup_store = gtk_list_store_new(5, 
+        G_TYPE_INT,     // Group #
+        G_TYPE_STRING,  // Hash (shortened)
+        G_TYPE_INT,     // File Count
+        G_TYPE_STRING,  // Files (all of them)
+        G_TYPE_STRING); // Full Hash (hidden)
     
+    // Load duplicates from database
     sqlite3_stmt *stmt;
-    const char *sql = "SELECT hash, COUNT(*) as cnt FROM history GROUP BY hash HAVING cnt > 1 ORDER BY cnt DESC;";
+    const char *sql = "SELECT hash, COUNT(DISTINCT filename) as cnt FROM history GROUP BY hash HAVING cnt > 1 ORDER BY cnt DESC;";
     
     int total_dupes = 0;
+    int group_num = 1;
     
     if (sqlite3_prepare_v2(app.db, sql, -1, &stmt, 0) == SQLITE_OK) {
         while (sqlite3_step(stmt) == SQLITE_ROW) {
             const char *hash = (const char*)sqlite3_column_text(stmt, 0);
             int count = sqlite3_column_int(stmt, 1);
-            total_dupes += count - 1;
+            total_dupes += count;
             
+            // Get ALL filenames (not just 5)
             sqlite3_stmt *stmt2;
             char sql2[512];
-            snprintf(sql2, sizeof(sql2), "SELECT filename FROM history WHERE hash='%s' LIMIT 5;", hash);
+            snprintf(sql2, sizeof(sql2), "SELECT DISTINCT filename FROM history WHERE hash='%s';", hash);
             
-            char files_list[1024] = "";
+            char files_list[4096] = "";
             if (sqlite3_prepare_v2(app.db, sql2, -1, &stmt2, 0) == SQLITE_OK) {
                 int idx = 0;
-                while (sqlite3_step(stmt2) == SQLITE_ROW && idx < 5) {
-                    if (idx > 0) strcat(files_list, ", ");
-                   strcat(files_list, (const char*)sqlite3_column_text(stmt2, 0));
+                while (sqlite3_step(stmt2) == SQLITE_ROW) {
+                    if (idx > 0) strcat(files_list, "\n  • ");
+                    else strcat(files_list, "  • ");
+                    strcat(files_list, (const char*)sqlite3_column_text(stmt2, 0));
                     idx++;
                 }
-                if (count > 5) strcat(files_list, "...");
             }
             sqlite3_finalize(stmt2);
             
+            // Shorten hash for display (first 16 chars)
+            char short_hash[20];
+            snprintf(short_hash, sizeof(short_hash), "%.16s...", hash);
+            
             GtkTreeIter iter;
             gtk_list_store_append(dup_store, &iter);
-            gtk_list_store_set(dup_store, &iter, 0, hash, 1, count, 2, files_list, -1);
+            gtk_list_store_set(dup_store, &iter, 
+                0, group_num++,
+                1, short_hash,
+                2, count,
+                3, files_list,
+                4, hash,
+                -1);
         }
     }
     sqlite3_finalize(stmt);
     
+    // Update stats label
+    int num_groups = gtk_tree_model_iter_n_children(GTK_TREE_MODEL(dup_store), NULL);
     char stats_text[256];
-    snprintf(stats_text, sizeof(stats_text), "<b>%d duplicate groups</b> found - %d duplicate files", 
-        gtk_tree_model_iter_n_children(GTK_TREE_MODEL(dup_store), NULL), total_dupes);
-    gtk_label_set_markup(GTK_LABEL(lbl_stats), stats_text);
+    if (num_groups > 0) {
+        snprintf(stats_text, sizeof(stats_text), 
+            "<span foreground='#e74c3c' weight='bold' size='large'>⚠️ Found %d duplicate groups (%d total duplicate files)</span>",
+            num_groups, total_dupes);
+    } else {
+        snprintf(stats_text, sizeof(stats_text), 
+            "<span foreground='#2ecc71' weight='bold' size='large'>✅ No duplicates found</span>");
+    }
+    gtk_label_set_markup(GTK_LABEL(app.lbl_dup_stats), stats_text);
     
+    // Create tree view with better formatting
     GtkWidget *tree = gtk_tree_view_new_with_model(GTK_TREE_MODEL(dup_store));
     GtkCellRenderer *rnd = gtk_cell_renderer_text_new();
     GtkCellRenderer *mono = gtk_cell_renderer_text_new();
     g_object_set(mono, "family", "Consolas", NULL);
     
-    gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(tree), -1, "Hash", mono, "text", 0, NULL);
-    gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(tree), -1, "Count", rnd, "text", 1, NULL);
+    // Column configuration
+    gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(tree), -1, "#", rnd, "text", 0, NULL);
+    gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(tree), -1, "Hash", mono, "text", 1, NULL);
     gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(tree), -1, "Files", rnd, "text", 2, NULL);
+    
+    // Files column with wrapping
+    GtkCellRenderer *wrap_renderer = gtk_cell_renderer_text_new();
+    g_object_set(wrap_renderer, "wrap-mode", PANGO_WRAP_WORD_CHAR, "wrap-width", 600, NULL);
+    GtkTreeViewColumn *files_col = gtk_tree_view_column_new_with_attributes("Duplicate Files", wrap_renderer, "text", 3, NULL);
+    gtk_tree_view_column_set_resizable(files_col, TRUE);
+    gtk_tree_view_column_set_expand(files_col, TRUE);
+    gtk_tree_view_append_column(GTK_TREE_VIEW(tree), files_col);
     
     gtk_container_add(GTK_CONTAINER(scrolled), tree);
     gtk_box_pack_start(GTK_BOX(card), scrolled, TRUE, TRUE, 0);
+    
+    // Buttons
+    GtkWidget *btn_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 10);
+    gtk_widget_set_halign(btn_box, GTK_ALIGN_CENTER);
+    gtk_widget_set_margin_top(btn_box, 10);
+    
+    GtkWidget *btn_filter = gtk_button_new_with_label("📂 Filter by Folder");
+    gtk_style_context_add_class(gtk_widget_get_style_context(btn_filter), "btn-action");
+    gtk_widget_set_tooltip_text(btn_filter, "Find duplicates only within a specific folder");
+    g_signal_connect(btn_filter, "clicked", G_CALLBACK(on_filter_duplicates_by_folder), dup_store);
+    gtk_box_pack_start(GTK_BOX(btn_box), btn_filter, FALSE, FALSE, 0);
+    
+    GtkWidget *btn_refresh = gtk_button_new_with_label("🔄 Refresh");
+    gtk_style_context_add_class(gtk_widget_get_style_context(btn_refresh), "btn-secondary");
+    gtk_widget_set_tooltip_text(btn_refresh, "Reload duplicates from database");
+    g_signal_connect(btn_refresh, "clicked", G_CALLBACK(on_refresh_all_duplicates), dup_store);
+    gtk_box_pack_start(GTK_BOX(btn_box), btn_refresh, FALSE, FALSE, 0);
+    
+    gtk_box_pack_start(GTK_BOX(card), btn_box, FALSE, FALSE, 0);
     
     return box;
 }
