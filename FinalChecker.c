@@ -84,7 +84,113 @@ const char *css_data =
     "filechooser button { color: #ecf0f1; background-image: linear-gradient(to right, #7f8c8d, #636e72); border: none; }"
     "filechooser button:hover { background-image: linear-gradient(to right, #95a5a6, #7f8c8d); }"
     "filechooser entry { color: #ecf0f1; background-color: #34495e; border: 1px solid #5d6d7e; }"
-    "filechooser label { color: #ecf0f1; }";
+    "filechooser label { color: #ecf0f1; }"
+    
+    /* Dialog Styling - AGGRESSIVE */
+    "dialog { background-color: #2c3e50; color: #ecf0f1; }"
+    "dialog * button { color: #2c3e50 !important; background-color: #ecf0f1 !important; border: 1px solid #8e44ad !important; padding: 8px 16px !important; }"
+    "dialog * button:hover { background-color: #bdc3c7 !important; }"
+    "dialog buttonbox button { color: #2c3e50 !important; background-color: #ecf0f1 !important; }"
+    "dialog actionbar button { color: #2c3e50 !important; background-color: #ecf0f1 !important; }"
+    "messagedialog { background-color: #2c3e50; color: #ecf0f1; }"
+    "messagedialog label { color: #ecf0f1; }"
+    "messagedialog * button { color: #2c3e50 !important; background-color: #ecf0f1 !important; border: 1px solid #8e44ad !important; padding: 8px 16px !important; }"
+    "messagedialog * button:hover { background-color: #bdc3c7 !important; }"
+    "messagedialog buttonbox button { color: #2c3e50 !important; background-color: #ecf0f1 !important; }"
+    "messagedialog actionbar button { color: #2c3e50 !important; background-color: #ecf0f1 !important; }"
+    "window.dialog button { color: #2c3e50 !important; background-color: #ecf0f1 !important; }"
+    
+    /* Combobox Styling */
+    "combobox button { color: #ecf0f1; background-color: #34495e; border: 1px solid #8e44ad; }"
+    "combobox button:hover { background-color: #3c5469; }"
+    "combobox arrow { color: #ecf0f1; }"
+    "combobox cellview { color: #ecf0f1; background-color: #34495e; }"
+    "combobox popover { background-color: #2c3e50; color: #ecf0f1; }"
+    "combobox menu { background-color: #2c3e50; color: #ecf0f1; }"
+    "combobox menuitem { color: #ecf0f1; background-color: #2c3e50; }"
+    "combobox menuitem:hover { background-color: #8e44ad; }"
+    "combobox cellview:selected { background-color: #8e44ad; color: white; }"
+    
+    /* NEW: Status Bar */
+    ".statusbar {background: linear-gradient(90deg, #1a252f 0%, #2c3e50 100%); border-top: 2px solid #3498db; padding: 8px 15px; }"
+    ".status-label { color: #ecf0f1; font-size: 12px; padding: 0 15px; font-weight: 500; }"
+    
+    /* NEW: Search Entry */
+    ".search-entry { background-color: #34495e; color: #ecf0f1; border: 2px solid #8e44ad; border-radius: 20px; padding: 8px 16px; }"
+    ".search-entry:focus { border-color: #3498db; background-color: #3f4f5f; box-shadow: 0 0 10px rgba(52,152,219,0.5); }"
+    
+    /* Entry Fields & Text Input */
+    "entry { color: #ecf0f1; background-color: #34495e; border: 1px solid #5d6d7e; padding: 8px; caret-color: #ecf0f1; }"
+    "entry:focus { border-color: #3498db; background-color: #3f4f5f; }"
+    "entry selection { background-color: #8e44ad; color: white; }"
+    
+    /* Text Views */
+    "textview { background-color: #2c3e50; color: #ecf0f1; }"
+    "textview text { background-color: #2c3e50; color: #ecf0f1; }"
+    "textview text selection { background-color: #8e44ad; color: white; }"
+    
+    /* Labels */
+    "label { color: #ecf0f1; }"
+    "label:disabled { color: #7f8c8d; }"
+    
+    /* Checkboxes & Radio Buttons */
+    "checkbutton { color: #ecf0f1; }"
+    "checkbutton label { color: #ecf0f1; }"
+    "checkbutton check { border: 2px solid #8e44ad; background-color: #34495e; }"
+    "checkbutton check:checked { background-color: #8e44ad; }"
+    "radiobutton { color: #ecf0f1; }"
+    "radiobutton label { color: #ecf0f1; }"
+    "radiobutton radio { border: 2px solid #8e44ad; background-color: #34495e; }"
+    "radiobutton radio:checked { background-color: #8e44ad; }"
+    
+    /* Switch */
+    "switch { background-color: #34495e; border: 1px solid #5d6d7e; }"
+    "switch:checked { background-color: #3498db; }"
+    "switch slider { background-color: #ecf0f1; }"
+    
+    /* Scrollbars */
+    "scrollbar { background-color: #2c3e50; }"
+    "scrollbar slider { background-color: #5d6d7e; border-radius: 10px; min-width: 12px; min-height: 12px; }"
+    "scrollbar slider:hover { background-color: #7f8c8d; }"
+    "scrollbar slider:active { background-color: #8e44ad; }"
+    
+    /* Tooltips */
+    "tooltip { background-color: #34495e; color: #ecf0f1; border: 1px solid #8e44ad; border-radius: 5px; padding: 8px; }"
+    "tooltip label { color: #ecf0f1; }"
+    
+    /* Spin Buttons */
+    "spinbutton { color: #ecf0f1; background-color: #34495e; border: 1px solid #5d6d7e; }"
+    "spinbutton button { color: #ecf0f1; background-color: #3f4f5f; border: none; }"
+    "spinbutton entry { color: #ecf0f1; background-color: #34495e; }"
+    
+    /* Scales (Sliders) */
+    "scale trough { background-color: #34495e; border-radius: 10px; }"
+    "scale slider { background-color: #8e44ad; border-radius: 50%; }"
+    "scale slider:hover { background-color: #9b59b6; }"
+    
+    /* Separators */
+    "separator { background-color: #5d6d7e; min-width: 1px; min-height: 1px; }"
+    
+    /* Frames */
+    "frame { border: 1px solid #5d6d7e; }"
+    "frame > border { border: 1px solid #5d6d7e; }"
+    
+    /* Notebooks (Tabs) */
+    "notebook { background-color: #2c3e50; }"
+    "notebook header { background-color: #34495e; }"
+    "notebook tab { color: #bdc3c7; background-color: #34495e; padding: 10px 20px; border: 1px solid #5d6d7e; }"
+    "notebook tab:checked { color: #ecf0f1; background-color: #2c3e50; border-bottom-color: #3498db; }"
+    "notebook tab:hover { background-color: #3f4f5f; }"
+    
+    /* Popovers & Menus */
+    "popover { background-color: #2c3e50; color: #ecf0f1; border: 1px solid #8e44ad; }"
+    "popover label { color: #ecf0f1; }"
+    "menu { background-color: #2c3e50; border: 1px solid #5d6d7e; }"
+    "menuitem { color: #ecf0f1; padding: 8px 16px; }"
+    "menuitem:hover { background-color: #8e44ad; }"
+    "menubar { background-color: #34495e; }"
+    "menubar > menuitem { color: #ecf0f1; padding: 8px 16px; }"
+    "menubar > menuitem:hover { background-color: #8e44ad; }";
 
 // Light Mode Theme
 const char *css_data_light = 
@@ -129,7 +235,113 @@ const char *css_data_light =
     "filechooser .view:selected { background-color: #3498db; color: #ffffff; }"
     "filechooser placessidebar { background-color: #ecf0f1; color: #2c3e50; }"
     "filechooser button { color: #2c3e50; background-color: #e0e0e0; }"
-    "filechooser entry { color: #2c3e50; background-color: #ffffff; border: 1px solid #bdbdbd; }";
+    "filechooser entry { color: #2c3e50; background-color: #ffffff; border: 1px solid #bdbdbd; }"
+    
+    /* Dialog Styling - AGGRESSIVE */
+    "dialog { background-color: #ffffff; color: #2c3e50; }"
+    "dialog * button { color: #ffffff !important; background-color: #3498db !important; border: 1px solid #2980b9 !important; padding: 8px 16px !important; }"
+    "dialog * button:hover { background-color: #2980b9 !important; }"
+    "dialog buttonbox button { color: #ffffff !important; background-color: #3498db !important; }"
+    "dialog actionbar button { color: #ffffff !important; background-color: #3498db !important; }"
+    "messagedialog { background-color: #ffffff; color: #2c3e50; }"
+    "messagedialog label { color: #2c3e50; }"
+    "messagedialog * button { color: #ffffff !important; background-color: #3498db !important; border: 1px solid #2980b9 !important; padding: 8px 16px !important; }"
+    "messagedialog * button:hover { background-color: #2980b9 !important; }"
+    "messagedialog buttonbox button { color: #ffffff !important; background-color: #3498db !important; }"
+    "messagedialog actionbar button { color: #ffffff !important; background-color: #3498db !important; }"
+    "window.dialog button { color: #ffffff !important; background-color: #3498db !important; }"
+    
+    /* Combobox Styling */
+    "combobox button { color: #2c3e50; background-color: #f0f0f0; border: 1px solid #bdbdbd; }"
+    "combobox button:hover { background-color: #e0e0e0; }"
+    "combobox arrow { color: #2c3e50; }"
+    "combobox cellview { color: #2c3e50; background-color: #f0f0f0; }"
+    "combobox popover { background-color: #ffffff; color: #2c3e50; }"
+    "combobox menu { background-color: #ffffff; color: #2c3e50; }"
+    "combobox menuitem { color: #2c3e50; background-color: #ffffff; }"
+    "combobox menuitem:hover { background-color: #3498db; color: white; }"
+    "combobox cellview:selected { background-color: #3498db; color: white; }"
+    
+    /* NEW: Status Bar */
+    ".statusbar { background: linear-gradient(90deg, #ecf0f1 0%, #ffffff 100%); border-top: 2px solid #3498db; padding: 8px 15px; }"
+    ".status-label { color: #2c3e50; font-size: 12px; padding: 0 15px; font-weight: 500; }"
+    
+    /* NEW: Search Entry */
+    ".search-entry { background-color: #ffffff; color: #2c3e50; border: 2px solid #3498db; border-radius: 20px; padding: 8px 16px; }"
+    ".search-entry:focus { border-color: #2980b9; background-color: #f8f9fa; box-shadow: 0 0 10px rgba(52,152,219,0.3); }"
+    
+    /* Entry Fields & Text Input */
+    "entry { color: #2c3e50; background-color: #ffffff; border: 1px solid #bdc3c7; padding: 8px; caret-color: #2c3e50; }"
+    "entry:focus { border-color: #3498db; background-color: #f8f9fa; }"
+    "entry selection { background-color: #3498db; color: white; }"
+    
+    /* Text Views */
+    "textview { background-color: #ffffff; color: #2c3e50; }"
+    "textview text { background-color: #ffffff; color: #2c3e50; }"
+    "textview text selection { background-color: #3498db; color: white; }"
+    
+    /* Labels */
+    "label { color: #2c3e50; }"
+    "label:disabled { color: #95a5a6; }"
+    
+    /* Checkboxes & Radio Buttons */
+    "checkbutton { color: #2c3e50; }"
+    "checkbutton label { color: #2c3e50; }"
+    "checkbutton check { border: 2px solid #3498db; background-color: #ffffff; }"
+    "checkbutton check:checked { background-color: #3498db; }"
+    "radiobutton { color: #2c3e50; }"
+    "radiobutton label { color: #2c3e50; }"
+    "radiobutton radio { border: 2px solid #3498db; background-color: #ffffff; }"
+    "radiobutton radio:checked { background-color: #3498db; }"
+    
+    /* Switch */
+    "switch { background-color: #dfe6e9; border: 1px solid #b2bec3; }"
+    "switch:checked { background-color: #3498db; }"
+    "switch slider { background-color: #ffffff; }"
+    
+    /* Scrollbars */
+    "scrollbar { background-color: #ecf0f1; }"
+    "scrollbar slider { background-color: #bdc3c7; border-radius: 10px; min-width: 12px; min-height: 12px; }"
+    "scrollbar slider:hover { background-color: #95a5a6; }"
+    "scrollbar slider:active { background-color: #3498db; }"
+    
+    /* Tooltips */
+    "tooltip { background-color: #34495e; color: #ecf0f1; border: 1px solid #3498db; border-radius: 5px; padding: 8px; }"
+    "tooltip label { color: #ecf0f1; }"
+    
+    /* Spin Buttons */
+    "spinbutton { color: #2c3e50; background-color: #ffffff; border: 1px solid #bdc3c7; }"
+    "spinbutton button { color: #2c3e50; background-color: #ecf0f1; border: none; }"
+    "spinbutton entry { color: #2c3e50; background-color: #ffffff; }"
+    
+    /* Scales (Sliders) */
+    "scale trough { background-color: #dfe6e9; border-radius: 10px; }"
+    "scale slider { background-color: #3498db; border-radius: 50%; }"
+    "scale slider:hover { background-color: #2980b9; }"
+    
+    /* Separators */
+    "separator { background-color: #bdc3c7; min-width: 1px; min-height: 1px; }"
+    
+    /* Frames */
+    "frame { border: 1px solid #bdc3c7; }"
+    "frame > border { border: 1px solid #bdc3c7; }"
+    
+    /* Notebooks (Tabs) */
+    "notebook { background-color: #ffffff; }"
+    "notebook header { background-color: #ecf0f1; }"
+    "notebook tab { color: #7f8c8d; background-color: #ecf0f1; padding: 10px 20px; border: 1px solid #bdc3c7; }"
+    "notebook tab:checked { color: #2c3e50; background-color: #ffffff; border-bottom-color: #3498db; }"
+    "notebook tab:hover { background-color: #dfe6e9; }"
+    
+    /* Popovers & Menus */
+    "popover { background-color: #ffffff; color: #2c3e50; border: 1px solid #bdc3c7; }"
+    "popover label { color: #2c3e50; }"
+    "menu { background-color: #ffffff; border: 1px solid #bdc3c7; }"
+    "menuitem { color: #2c3e50; padding: 8px 16px; }"
+    "menuitem:hover { background-color: #3498db; color: white; }"
+    "menubar { background-color: #ecf0f1; }"
+    "menubar > menuitem { color: #2c3e50; padding: 8px 16px; }"
+    "menubar > menuitem:hover { background-color: #3498db; color: white; }";
 
 // ============================================================
 // 2. GLOBAL APPLICATION STATE
@@ -178,6 +390,19 @@ typedef struct {
     // Theme
     int theme_mode; // 0=dark, 1=light
     GtkCssProvider *css_provider;
+    
+    // NEW: Status Bar
+    GtkWidget *statusbar;
+    GtkWidget *lbl_status_files;
+    GtkWidget *lbl_status_speed;
+    GtkWidget *lbl_status_db;
+    
+    // NEW: Search & Filter
+    GtkWidget *entry_search;
+    GtkTreeModelFilter *history_filter;
+    
+    // NEW: Context Menu
+    GtkWidget *context_menu;
 } AppState;
 
 AppState app;
@@ -211,6 +436,89 @@ char* show_input_dialog(GtkWindow *parent, const char *title) {
     gtk_widget_destroy(dialog);
     return result;
 }
+
+// ============================================================
+// NEW UTILITY FUNCTIONS - Pure Additions
+// ============================================================
+
+char* format_file_size(long long bytes) {
+    static char buffer[32];
+    const char *units[] = {"B", "KB", "MB", "GB", "TB"};
+    int unit_index = 0;
+    double size = (double)bytes;
+    while (size >= 1024.0 && unit_index < 4) { size /= 1024.0; unit_index++; }
+    if (unit_index == 0) snprintf(buffer, sizeof(buffer), "%lld %s", bytes, units[unit_index]);
+    else snprintf(buffer, sizeof(buffer), "%.2f %s", size, units[unit_index]);
+    return buffer;
+}
+
+char* format_elapsed_time(time_t start_time) {
+    static char buffer[64];
+    time_t elapsed = time(NULL) - start_time;
+    if (elapsed < 60) snprintf(buffer, sizeof(buffer), "%lds", (long)elapsed);
+    else if (elapsed < 3600) snprintf(buffer, sizeof(buffer), "%ldm %lds", (long)(elapsed/60), (long)(elapsed%60));
+    else snprintf(buffer, sizeof(buffer), "%ldh %ldm %lds", (long)(elapsed/3600), (long)((elapsed%3600)/60), (long)(elapsed%60));
+    return buffer;
+}
+
+double calculate_hash_speed(long long bytes, time_t start_time) {
+    time_t elapsed = time(NULL) - start_time;
+    if (elapsed == 0) elapsed = 1;
+    return (bytes / (1024.0 * 1024.0)) / elapsed;
+}
+
+gboolean is_valid_extension(const char *filename) {
+    if (!filename || !app.filter_noise) return TRUE;
+    const char *skip[] = {".tmp",".temp",".cache",".bak",".swp",".log",".lock","~",".crdownload",".part"};
+    for (int i = 0; i < 10; i++) {
+        int len = strlen(skip[i]), flen = strlen(filename);
+        if (flen >= len && strcmp(filename + flen - len, skip[i]) == 0) return FALSE;
+    }
+    return TRUE;
+}
+
+char* get_file_mtime_str(const char *filepath) {
+    static char buffer[64];
+    struct stat st;
+    if (stat(filepath, &st) == 0) {
+        strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", localtime(&st.st_mtime));
+        return buffer;
+    }
+    return "Unknown";
+}
+
+gboolean file_exists(const char *filepath) {
+    struct stat st;
+    return (stat(filepath, &st) == 0);
+}
+
+char* get_file_permissions(const char *filepath) {
+    static char buffer[12];
+    struct stat st;
+    if (stat(filepath, &st) != 0) { strcpy(buffer, "----------"); return buffer; }
+    buffer[0] = S_ISDIR(st.st_mode) ? 'd' : '-';
+    buffer[1] = (st.st_mode & S_IRUSR) ? 'r' : '-'; buffer[2] = (st.st_mode & S_IWUSR) ? 'w' : '-'; buffer[3] = (st.st_mode & S_IXUSR) ? 'x' : '-';
+    buffer[4] = (st.st_mode & S_IRGRP) ? 'r' : '-'; buffer[5] = (st.st_mode & S_IWGRP) ? 'w' : '-'; buffer[6] = (st.st_mode & S_IXGRP) ? 'x' : '-';
+    buffer[7] = (st.st_mode & S_IROTH) ? 'r' : '-'; buffer[8] = (st.st_mode & S_IWOTH) ? 'w' : '-'; buffer[9] = (st.st_mode & S_IXOTH) ? 'x' : '-';
+    buffer[10] = '\0';
+    return buffer;
+}
+
+int count_files_in_directory(const char *dirpath) {
+    int count = 0;
+    GDir *dir = g_dir_open(dirpath, 0, NULL);
+    if (!dir) return 0;
+    const char *name;
+    while ((name = g_dir_read_name(dir)) != NULL) {
+        char full_path[2048]; snprintf(full_path, sizeof(full_path), "%s/%s", dirpath, name);
+        struct stat st;
+        if (stat(full_path, &st) == 0 && S_ISREG(st.st_mode)) count++;
+    }
+    g_dir_close(dir);
+    return count;
+}
+
+// ============================================================
 
 // ============================================================
 // 4. DATABASE LAYER (SQLite)
@@ -499,7 +807,7 @@ gboolean draw_file_history_callback(GtkWidget *widget, cairo_t *cr, gpointer dat
             strcpy(points[count].time, t);
             
             // Logic: Is this a "good" event or "bad"?
-            if (strstr(r, "MATCH") || strstr(r, "Computed") || strstr(r, "Saved")) 
+            if (strstr(r, "MATCH") || strstr(r, "Computed") || strstr(r, "Saved") || strstr(r, "Auto-Scan")) 
                 points[count].status = 1; 
             else 
                 points[count].status = 0; // Mismatch/Fail
@@ -571,6 +879,16 @@ gboolean draw_global_stats_callback(GtkWidget *widget, cairo_t *cr, gpointer dat
     double center_x = width / 2.0;
     double center_y = height / 2.0;
     double radius = MIN(width, height) / 2.5;
+    
+    // Set background based on theme
+    if (app.theme_mode == 1) {
+        // Light mode background
+        cairo_set_source_rgb(cr, 0.96, 0.96, 0.98); // #f5f7fa
+    } else {
+        // Dark mode background
+        cairo_set_source_rgb(cr, 0.10, 0.12, 0.18); // #1a1f2e
+    }
+    cairo_paint(cr);
 
     int match_count = 0, fail_count = 0;
     sqlite3_stmt *stmt;
@@ -612,8 +930,12 @@ gboolean draw_global_stats_callback(GtkWidget *widget, cairo_t *cr, gpointer dat
         cairo_fill(cr);
     }
     
-    // Labels
-    cairo_set_source_rgb(cr, 1, 1, 1);
+    // Labels - use theme-aware text color
+    if (app.theme_mode == 1) {
+        cairo_set_source_rgb(cr, 0.17, 0.24, 0.31); // Dark text for light mode
+    } else {
+        cairo_set_source_rgb(cr, 1, 1, 1); // White text for dark mode
+    }
     cairo_select_font_face(cr, "Sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_BOLD);
     cairo_set_font_size(cr, 20);
     
@@ -688,7 +1010,12 @@ gboolean draw_global_stats_callback(GtkWidget *widget, cairo_t *cr, gpointer dat
             cairo_rectangle(cr, 450, y_pos - 10, 15, 15);
             cairo_fill(cr);
             
-            cairo_set_source_rgb(cr, 1, 1, 1);
+            // Theme-aware legend text
+            if (app.theme_mode == 1) {
+                cairo_set_source_rgb(cr, 0.17, 0.24, 0.31); // Dark text for light mode
+            } else {
+                cairo_set_source_rgb(cr, 1, 1, 1); // White text for dark mode
+            }
             cairo_move_to(cr, 475, y_pos);
             snprintf(label, sizeof(label), ".%s: %d", (char*)key, *(int*)value);
             cairo_show_text(cr, label);
@@ -1134,6 +1461,61 @@ void on_export_clicked(GtkWidget *btn, gpointer data) {
     gtk_widget_destroy(dialog);
 }
 
+// Helper callback to style buttons recursively
+static void apply_button_style(GtkWidget *widget, gpointer data) {
+    if (GTK_IS_BUTTON(widget)) {
+        GtkCssProvider *provider = (GtkCssProvider*)data;
+        gtk_style_context_add_provider(gtk_widget_get_style_context(widget), 
+                                       GTK_STYLE_PROVIDER(provider), 
+                                       GTK_STYLE_PROVIDER_PRIORITY_USER);
+    } else if (GTK_IS_CONTAINER(widget)) {
+        gtk_container_foreach(GTK_CONTAINER(widget), apply_button_style, data);
+    }
+}
+
+// Helper function to style dialog buttons programmatically
+void style_dialog_buttons(GtkWidget *dialog) {
+    GtkCssProvider *provider = gtk_css_provider_new();
+    const char *css = "button { color: #2c3e50; background: #ecf0f1; background-image: none; border: 2px solid #e74c3c; padding: 10px 20px; font-weight: bold; min-width: 80px; min-height: 40px; } button:hover { background: #bdc3c7; }";
+    gtk_css_provider_load_from_data(provider, css, -1, NULL);
+    
+    gtk_container_foreach(GTK_CONTAINER(dialog), apply_button_style, provider);
+    g_object_unref(provider);
+}
+
+// Clear All Data Feature
+void on_clear_all_data_clicked(GtkWidget *btn, gpointer data) {
+    if(!app.db) return;
+    
+    GtkWidget *confirm = gtk_message_dialog_new(GTK_WINDOW(app.window), GTK_DIALOG_MODAL, GTK_MESSAGE_WARNING, GTK_BUTTONS_YES_NO, "⚠️ Clear All Data?");
+    gtk_message_dialog_format_secondary_text(GTK_MESSAGE_DIALOG(confirm), "This will permanently delete:\n• All scan history logs\n• All baseline snapshots\n• All database  records\n• Clear graphs and statistics\n\nThis CANNOT be undone!");
+    
+    style_dialog_buttons(confirm);  // APPLY PROGRAMMATIC STYLING
+    
+    int response = gtk_dialog_run(GTK_DIALOG(confirm));
+    gtk_widget_destroy(confirm);
+    
+    if (response == GTK_RESPONSE_YES) {
+        sqlite3_exec(app.db, "DELETE FROM history;", 0, 0, NULL);
+        sqlite3_exec(app.db, "DELETE FROM snapshots;", 0, 0, NULL);
+        sqlite3_exec(app.db, "DELETE FROM snapshot_entries;", 0, 0, NULL);
+        sqlite3_exec(app.db, "DELETE FROM sqlite_sequence;", 0, 0, NULL);
+        
+        if (app.history_store) gtk_list_store_clear(app.history_store);
+        if (app.dir_store) gtk_list_store_clear(app.dir_store);
+        if (app.drawing_area) gtk_widget_queue_draw(app.drawing_area);
+        memset(app.current_scan_dir, 0, sizeof(app.current_scan_dir));
+        
+        GtkWidget *msg = gtk_message_dialog_new(GTK_WINDOW(app.window), GTK_DIALOG_MODAL, GTK_MESSAGE_INFO, GTK_BUTTONS_OK, "✅ All Data Cleared!");
+        gtk_message_dialog_format_secondary_text(GTK_MESSAGE_DIALOG(msg), "Database reset. All logs and snapshots deleted.");
+        
+        style_dialog_buttons(msg);  // STYLE OK BUTTON TOO
+        
+        gtk_dialog_run(GTK_DIALOG(msg));
+        gtk_widget_destroy(msg);
+    }
+}
+
 // Feature 15: HTML Report Generation
 void on_export_html_report(GtkWidget *btn, gpointer data) {
     if(!app.db) return;
@@ -1297,6 +1679,13 @@ GtkWidget* create_history_page() {
     gtk_widget_set_tooltip_text(btn_html, "Generate professional HTML report with statistics (Ctrl+H)");
     gtk_box_pack_start(GTK_BOX(card), btn_html, FALSE, FALSE, 0);
     
+    // Clear All Data Button
+    GtkWidget *btn_clear = gtk_button_new_with_label("⚠️ Clear All Data");
+    g_signal_connect(btn_clear, "clicked", G_CALLBACK(on_clear_all_data_clicked), NULL);
+    gtk_style_context_add_class(gtk_widget_get_style_context(btn_clear), "btn-secondary");
+    gtk_widget_set_tooltip_text(btn_clear, "Delete all logs, snapshots, and database records permanently");
+    gtk_box_pack_start(GTK_BOX(card), btn_clear, FALSE, FALSE, 0);
+    
     return box;
 }
 
@@ -1449,10 +1838,20 @@ GtkWidget* create_stats_page() {
     g_signal_connect(app.drawing_area, "draw", G_CALLBACK(draw_global_stats_callback), NULL);
     gtk_box_pack_start(GTK_BOX(card), app.drawing_area, TRUE, TRUE, 0);
     
+    // Legend with actual colored boxes
     GtkWidget *legend_box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 20);
     gtk_widget_set_halign(legend_box, GTK_ALIGN_CENTER);
-    gtk_box_pack_start(GTK_BOX(legend_box), gtk_label_new("■ MATCH (Green)"), FALSE, FALSE, 0);
-    gtk_box_pack_start(GTK_BOX(legend_box), gtk_label_new("■ FAIL (Red)"), FALSE, FALSE, 0);
+    
+    // Green box for MATCH
+    GtkWidget *match_label = gtk_label_new(NULL);
+    gtk_label_set_markup(GTK_LABEL(match_label), "<span foreground='#2ecc71' size='20000' weight='bold'>■</span> MATCH (Green)");
+    gtk_box_pack_start(GTK_BOX(legend_box), match_label, FALSE, FALSE, 0);
+    
+    // Red box for FAIL
+    GtkWidget *fail_label = gtk_label_new(NULL);
+    gtk_label_set_markup(GTK_LABEL(fail_label), "<span foreground='#e74c3c' size='20000' weight='bold'>■</span> FAIL (Red)");
+    gtk_box_pack_start(GTK_BOX(legend_box), fail_label, FALSE, FALSE, 0);
+    
     gtk_box_pack_start(GTK_BOX(card), legend_box, FALSE, FALSE, 10);
     return box;
 }
@@ -1461,6 +1860,34 @@ GtkWidget* create_stats_page() {
 void on_algo_changed(GtkComboBox *w, gpointer d) { 
     app.hash_algo = gtk_combo_box_get_active(w); 
 }
+
+// NEW: Update Status Bar (Safe utility function)
+void update_statusbar() {
+    if (!app.lbl_status_files || !app.lbl_status_db) return;
+    
+    // Count total history entries
+    int total_records = 0;
+    if (app.db) {
+        sqlite3_stmt *stmt;
+        const char *sql = "SELECT COUNT(*) FROM history;";
+        if (sqlite3_prepare_v2(app.db, sql, -1, &stmt, 0) == SQLITE_OK) {
+            if (sqlite3_step(stmt) == SQLITE_ROW) {
+                total_records = sqlite3_column_int(stmt, 0);
+            }
+            sqlite3_finalize(stmt);
+        }
+    }
+    
+    // Update labels
+    char files_text[64];
+    snprintf(files_text, sizeof(files_text), "📁 Files Scanned: %d", app.files_scanned);
+    gtk_label_set_text(GTK_LABEL(app.lbl_status_files), files_text);
+    
+    char db_text[64];
+    snprintf(db_text, sizeof(db_text), "💾 Database: %d records", total_records);
+    gtk_label_set_text(GTK_LABEL(app.lbl_status_db), db_text);
+}
+
 void on_filter_toggled(GtkToggleButton *b, gpointer d) {
     app.filter_noise = gtk_toggle_button_get_active(b);
 }
