@@ -387,6 +387,9 @@ typedef struct {
     long long bytes_scanned;
     GtkWidget *lbl_metrics; // Metrics display label
     
+    // Snapshot Management
+    GtkListStore *snapshot_store; // For snapshot tab
+    
     // Theme
     int theme_mode; // 0=dark, 1=light
     GtkCssProvider *css_provider;
@@ -546,6 +549,25 @@ void init_db() {
                               "FOREIGN KEY(snapshot_id) REFERENCES snapshots(id));";
     sqlite3_exec(app.db, sql_entries, 0, 0, NULL);
 }
+
+// Helper function to get the last known hash for a file
+char* db_get_last_hash(const char *filename) {
+    char *last_hash = NULL;
+    char *sql = sqlite3_mprintf("SELECT hash FROM history WHERE filename='%q' ORDER BY id DESC LIMIT 1;", filename);
+    
+    sqlite3_stmt *stmt;
+    if (sqlite3_prepare_v2(app.db, sql, -1, &stmt, 0) == SQLITE_OK) {
+        if (sqlite3_step(stmt) == SQLITE_ROW) {
+            const char *h = (const char*)sqlite3_column_text(stmt, 0);
+            if (h) last_hash = g_strdup(h);
+        }
+    }
+    sqlite3_finalize(stmt);
+    sqlite3_free(sql);
+    
+    return last_hash; // Caller must g_free() this
+}
+
 
 void db_insert_log(const char *filename, const char *hash, const char *result) {
     char sql[2048];
@@ -748,13 +770,28 @@ void process_directory(const char *dir_path) {
                 }
                 app.files_scanned++;
                 
+                // Feature Enhanced: Detect if file changed
+                char *prev_hash = db_get_last_hash(full_path);
+                const char *log_result;
+                
+                if (prev_hash) {
+                    if (strcmp(prev_hash, hash) == 0) {
+                        log_result = "File Unchanged";  // Same hash = no change
+                    } else {
+                        log_result = "File Changed";     // Different hash = MODIFIED!
+                    }
+                    g_free(prev_hash);
+                } else {
+                    log_result = "New File Detected";   // First time seeing this file
+                }
+                
                 ScanResult *res = g_malloc(sizeof(ScanResult));
                 res->filename = g_strdup(full_path);
                 res->hash = g_strdup(hash);
                 res->extension = g_strdup(get_extension(name));
                 res->progress = -1;
                 g_idle_add(on_scan_update, res);
-                db_insert_log(full_path, hash, "Auto-Scan");
+                db_insert_log(full_path, hash, log_result);
             }
         }
     }
@@ -808,10 +845,13 @@ gboolean draw_file_history_callback(GtkWidget *widget, cairo_t *cr, gpointer dat
             strcpy(points[count].time, t);
             
             // Logic: Is this a "good" event or "bad"?
-            if (strstr(r, "MATCH") || strstr(r, "Computed") || strstr(r, "Saved") || strstr(r, "Auto-Scan")) 
-                points[count].status = 1; 
-            else 
-                points[count].status = 0; // Mismatch/Fail
+            // GOOD (Green - Status 1): File unchanged, new file, successful match, or initial scan
+            // BAD (Red - Status 0): File changed (modified), verification failed
+            if (strstr(r, "File Changed") || strstr(r, "FAIL")) {
+                points[count].status = 0; // FAIL - File was modified!
+            } else {
+                points[count].status = 1; // OK - File unchanged or new
+            }
             
             count++;
             if (count >= 20) break;
@@ -1163,6 +1203,31 @@ void on_verify_clicked(GtkWidget *btn, gpointer data) {
 // 9. UI LAYOUT CONSTRUCTION
 // ============================================================
 
+// Helper function to refresh snapshot list
+void refresh_snapshot_list() {
+    if (!app.snapshot_store) return; // Not initialized yet
+    
+    // Clear existing entries
+    gtk_list_store_clear(app.snapshot_store);
+    
+    // Reload from database
+    sqlite3_stmt *stmt;
+    const char *sql = "SELECT id, timestamp, description, root_dir FROM snapshots ORDER BY id DESC;";
+    if (sqlite3_prepare_v2(app.db, sql, -1, &stmt, 0) == SQLITE_OK) {
+        while (sqlite3_step(stmt) == SQLITE_ROW) {
+            GtkTreeIter iter;
+            gtk_list_store_append(app.snapshot_store, &iter);
+            gtk_list_store_set(app.snapshot_store, &iter,
+                0, sqlite3_column_int(stmt, 0),
+                1, sqlite3_column_text(stmt, 1),
+                2, sqlite3_column_text(stmt, 2),
+                3, sqlite3_column_text(stmt, 3),
+                -1);
+        }
+    }
+    sqlite3_finalize(stmt);
+}
+
 // --- Snapshot Features (Feature 1) ---
 
 // Feature 4: VirusTotal
@@ -1194,6 +1259,10 @@ void on_create_snapshot_clicked(GtkWidget *btn, gpointer data) {
                 g_free(path); g_free(hash);
                 valid = gtk_tree_model_iter_next(GTK_TREE_MODEL(app.dir_store), &iter);
             }
+            
+            // Refresh snapshot list UI
+            refresh_snapshot_list();
+            
             GtkWidget *msg = gtk_message_dialog_new(GTK_WINDOW(app.window), GTK_DIALOG_MODAL, GTK_MESSAGE_INFO, GTK_BUTTONS_OK, "Snapshot created successfully!");
             gtk_dialog_run(GTK_DIALOG(msg)); gtk_widget_destroy(msg);
         }
@@ -2003,26 +2072,13 @@ GtkWidget* create_snapshots_page() {
     GtkWidget *scrolled = gtk_scrolled_window_new(NULL, NULL);
     gtk_widget_set_vexpand(scrolled, TRUE);
     
-    GtkListStore *snapshot_store = gtk_list_store_new(4, G_TYPE_INT, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
+    // Create and store reference for refreshing
+    app.snapshot_store = gtk_list_store_new(4, G_TYPE_INT, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
     
     // Load snapshots from DB
-    sqlite3_stmt *stmt;
-    const char *sql = "SELECT id, timestamp, description, root_dir FROM snapshots ORDER BY id DESC;";
-    if (sqlite3_prepare_v2(app.db, sql, -1, &stmt, 0) == SQLITE_OK) {
-        while (sqlite3_step(stmt) == SQLITE_ROW) {
-            GtkTreeIter iter;
-            gtk_list_store_append(snapshot_store, &iter);
-            gtk_list_store_set(snapshot_store, &iter,
-                0, sqlite3_column_int(stmt, 0),
-                1, sqlite3_column_text(stmt, 1),
-                2, sqlite3_column_text(stmt, 2),
-                3, sqlite3_column_text(stmt, 3),
-                -1);
-        }
-    }
-    sqlite3_finalize(stmt);
+    refresh_snapshot_list();  // Use the refresh function
     
-    GtkWidget *tree = gtk_tree_view_new_with_model(GTK_TREE_MODEL(snapshot_store));
+    GtkWidget *tree = gtk_tree_view_new_with_model(GTK_TREE_MODEL(app.snapshot_store));
     GtkCellRenderer *rnd = gtk_cell_renderer_text_new();
     
     gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(tree), -1, "ID", rnd, "text", 0, NULL);
